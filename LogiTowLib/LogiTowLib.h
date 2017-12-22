@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "controller.h"
+#import <JavaVM/jni.h>
 
 @interface LogiTowLib : NSObject
 

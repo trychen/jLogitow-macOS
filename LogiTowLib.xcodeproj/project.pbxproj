@@ -9,12 +9,54 @@
 /* Begin PBXBuildFile section */
 		6B4F13101FDC53B5003BF987 /* LogiTowLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F130F1FDC53B5003BF987 /* LogiTowLib.h */; };
 		6B4F13121FDC53B5003BF987 /* LogiTowLib.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F13111FDC53B5003BF987 /* LogiTowLib.m */; };
+		6B4F132E1FDC5424003BF987 /* BabyBluetooth.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F131C1FDC5424003BF987 /* BabyBluetooth.h */; };
+		6B4F132F1FDC5424003BF987 /* BabyBluetooth.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F131D1FDC5424003BF987 /* BabyBluetooth.m */; };
+		6B4F13301FDC5424003BF987 /* BabyCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F131E1FDC5424003BF987 /* BabyCallback.h */; };
+		6B4F13311FDC5424003BF987 /* BabyCallback.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F131F1FDC5424003BF987 /* BabyCallback.m */; };
+		6B4F13321FDC5424003BF987 /* BabyCentralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F13201FDC5424003BF987 /* BabyCentralManager.h */; };
+		6B4F13331FDC5424003BF987 /* BabyCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F13211FDC5424003BF987 /* BabyCentralManager.m */; };
+		6B4F13341FDC5424003BF987 /* BabyDefine.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F13221FDC5424003BF987 /* BabyDefine.h */; };
+		6B4F13351FDC5424003BF987 /* BabyDefine.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F13231FDC5424003BF987 /* BabyDefine.m */; };
+		6B4F13361FDC5424003BF987 /* BabyOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F13241FDC5424003BF987 /* BabyOptions.h */; };
+		6B4F13371FDC5424003BF987 /* BabyOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F13251FDC5424003BF987 /* BabyOptions.m */; };
+		6B4F13381FDC5424003BF987 /* BabyPeripheralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F13261FDC5424003BF987 /* BabyPeripheralManager.h */; };
+		6B4F13391FDC5424003BF987 /* BabyPeripheralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F13271FDC5424003BF987 /* BabyPeripheralManager.m */; };
+		6B4F133A1FDC5424003BF987 /* BabyRhythm.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F13281FDC5424003BF987 /* BabyRhythm.h */; };
+		6B4F133B1FDC5424003BF987 /* BabyRhythm.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F13291FDC5424003BF987 /* BabyRhythm.m */; };
+		6B4F133C1FDC5424003BF987 /* BabySpeaker.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F132A1FDC5424003BF987 /* BabySpeaker.h */; };
+		6B4F133D1FDC5424003BF987 /* BabySpeaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F132B1FDC5424003BF987 /* BabySpeaker.m */; };
+		6B4F133E1FDC5424003BF987 /* BabyToy.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F132C1FDC5424003BF987 /* BabyToy.h */; };
+		6B4F133F1FDC5424003BF987 /* BabyToy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F132D1FDC5424003BF987 /* BabyToy.m */; };
+		6B4F13441FDC5BCE003BF987 /* controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B4F13431FDC5BCE003BF987 /* controller.h */; };
+		6B4F13461FDC5BED003BF987 /* controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B4F13451FDC5BED003BF987 /* controller.m */; };
+		6B7061911FE5497C005B1CA8 /* com_trychen_logitow_LogiTowBLEStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B7061901FE5497C005B1CA8 /* com_trychen_logitow_LogiTowBLEStack.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6B4F130C1FDC53B5003BF987 /* libLogiTowLib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libLogiTowLib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B4F130C1FDC53B5003BF987 /* liblogitow.jnilib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblogitow.jnilib; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B4F130F1FDC53B5003BF987 /* LogiTowLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogiTowLib.h; sourceTree = "<group>"; };
 		6B4F13111FDC53B5003BF987 /* LogiTowLib.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LogiTowLib.m; sourceTree = "<group>"; };
+		6B4F131C1FDC5424003BF987 /* BabyBluetooth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyBluetooth.h; sourceTree = "<group>"; };
+		6B4F131D1FDC5424003BF987 /* BabyBluetooth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyBluetooth.m; sourceTree = "<group>"; };
+		6B4F131E1FDC5424003BF987 /* BabyCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyCallback.h; sourceTree = "<group>"; };
+		6B4F131F1FDC5424003BF987 /* BabyCallback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyCallback.m; sourceTree = "<group>"; };
+		6B4F13201FDC5424003BF987 /* BabyCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyCentralManager.h; sourceTree = "<group>"; };
+		6B4F13211FDC5424003BF987 /* BabyCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyCentralManager.m; sourceTree = "<group>"; };
+		6B4F13221FDC5424003BF987 /* BabyDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyDefine.h; sourceTree = "<group>"; };
+		6B4F13231FDC5424003BF987 /* BabyDefine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyDefine.m; sourceTree = "<group>"; };
+		6B4F13241FDC5424003BF987 /* BabyOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyOptions.h; sourceTree = "<group>"; };
+		6B4F13251FDC5424003BF987 /* BabyOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyOptions.m; sourceTree = "<group>"; };
+		6B4F13261FDC5424003BF987 /* BabyPeripheralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyPeripheralManager.h; sourceTree = "<group>"; };
+		6B4F13271FDC5424003BF987 /* BabyPeripheralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyPeripheralManager.m; sourceTree = "<group>"; };
+		6B4F13281FDC5424003BF987 /* BabyRhythm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyRhythm.h; sourceTree = "<group>"; };
+		6B4F13291FDC5424003BF987 /* BabyRhythm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyRhythm.m; sourceTree = "<group>"; };
+		6B4F132A1FDC5424003BF987 /* BabySpeaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabySpeaker.h; sourceTree = "<group>"; };
+		6B4F132B1FDC5424003BF987 /* BabySpeaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabySpeaker.m; sourceTree = "<group>"; };
+		6B4F132C1FDC5424003BF987 /* BabyToy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BabyToy.h; sourceTree = "<group>"; };
+		6B4F132D1FDC5424003BF987 /* BabyToy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BabyToy.m; sourceTree = "<group>"; };
+		6B4F13431FDC5BCE003BF987 /* controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = controller.h; sourceTree = "<group>"; };
+		6B4F13451FDC5BED003BF987 /* controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = controller.m; sourceTree = "<group>"; };
+		6B7061901FE5497C005B1CA8 /* com_trychen_logitow_LogiTowBLEStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = com_trychen_logitow_LogiTowBLEStack.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,7 +81,7 @@
 		6B4F130D1FDC53B5003BF987 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6B4F130C1FDC53B5003BF987 /* libLogiTowLib.dylib */,
+				6B4F130C1FDC53B5003BF987 /* liblogitow.jnilib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -47,10 +89,47 @@
 		6B4F130E1FDC53B5003BF987 /* LogiTowLib */ = {
 			isa = PBXGroup;
 			children = (
+				6B4F131B1FDC5424003BF987 /* BabyBluetooth */,
+				6B4F13181FDC53C6003BF987 /* jni */,
 				6B4F130F1FDC53B5003BF987 /* LogiTowLib.h */,
 				6B4F13111FDC53B5003BF987 /* LogiTowLib.m */,
+				6B4F13431FDC5BCE003BF987 /* controller.h */,
+				6B4F13451FDC5BED003BF987 /* controller.m */,
 			);
 			path = LogiTowLib;
+			sourceTree = "<group>";
+		};
+		6B4F13181FDC53C6003BF987 /* jni */ = {
+			isa = PBXGroup;
+			children = (
+				6B7061901FE5497C005B1CA8 /* com_trychen_logitow_LogiTowBLEStack.h */,
+			);
+			name = jni;
+			sourceTree = "<group>";
+		};
+		6B4F131B1FDC5424003BF987 /* BabyBluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				6B4F131C1FDC5424003BF987 /* BabyBluetooth.h */,
+				6B4F131D1FDC5424003BF987 /* BabyBluetooth.m */,
+				6B4F131E1FDC5424003BF987 /* BabyCallback.h */,
+				6B4F131F1FDC5424003BF987 /* BabyCallback.m */,
+				6B4F13201FDC5424003BF987 /* BabyCentralManager.h */,
+				6B4F13211FDC5424003BF987 /* BabyCentralManager.m */,
+				6B4F13221FDC5424003BF987 /* BabyDefine.h */,
+				6B4F13231FDC5424003BF987 /* BabyDefine.m */,
+				6B4F13241FDC5424003BF987 /* BabyOptions.h */,
+				6B4F13251FDC5424003BF987 /* BabyOptions.m */,
+				6B4F13261FDC5424003BF987 /* BabyPeripheralManager.h */,
+				6B4F13271FDC5424003BF987 /* BabyPeripheralManager.m */,
+				6B4F13281FDC5424003BF987 /* BabyRhythm.h */,
+				6B4F13291FDC5424003BF987 /* BabyRhythm.m */,
+				6B4F132A1FDC5424003BF987 /* BabySpeaker.h */,
+				6B4F132B1FDC5424003BF987 /* BabySpeaker.m */,
+				6B4F132C1FDC5424003BF987 /* BabyToy.h */,
+				6B4F132D1FDC5424003BF987 /* BabyToy.m */,
+			);
+			path = BabyBluetooth;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -60,7 +139,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B4F132E1FDC5424003BF987 /* BabyBluetooth.h in Headers */,
+				6B4F13361FDC5424003BF987 /* BabyOptions.h in Headers */,
+				6B4F13441FDC5BCE003BF987 /* controller.h in Headers */,
+				6B4F133C1FDC5424003BF987 /* BabySpeaker.h in Headers */,
+				6B4F13381FDC5424003BF987 /* BabyPeripheralManager.h in Headers */,
 				6B4F13101FDC53B5003BF987 /* LogiTowLib.h in Headers */,
+				6B7061911FE5497C005B1CA8 /* com_trychen_logitow_LogiTowBLEStack.h in Headers */,
+				6B4F13301FDC5424003BF987 /* BabyCallback.h in Headers */,
+				6B4F133A1FDC5424003BF987 /* BabyRhythm.h in Headers */,
+				6B4F13321FDC5424003BF987 /* BabyCentralManager.h in Headers */,
+				6B4F13341FDC5424003BF987 /* BabyDefine.h in Headers */,
+				6B4F133E1FDC5424003BF987 /* BabyToy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,7 +171,7 @@
 			);
 			name = LogiTowLib;
 			productName = LogiTowLib;
-			productReference = 6B4F130C1FDC53B5003BF987 /* libLogiTowLib.dylib */;
+			productReference = 6B4F130C1FDC53B5003BF987 /* liblogitow.jnilib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -119,6 +209,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B4F133F1FDC5424003BF987 /* BabyToy.m in Sources */,
+				6B4F132F1FDC5424003BF987 /* BabyBluetooth.m in Sources */,
+				6B4F13461FDC5BED003BF987 /* controller.m in Sources */,
+				6B4F133B1FDC5424003BF987 /* BabyRhythm.m in Sources */,
+				6B4F13351FDC5424003BF987 /* BabyDefine.m in Sources */,
+				6B4F133D1FDC5424003BF987 /* BabySpeaker.m in Sources */,
+				6B4F13331FDC5424003BF987 /* BabyCentralManager.m in Sources */,
+				6B4F13311FDC5424003BF987 /* BabyCallback.m in Sources */,
+				6B4F13391FDC5424003BF987 /* BabyPeripheralManager.m in Sources */,
+				6B4F13371FDC5424003BF987 /* BabyOptions.m in Sources */,
 				6B4F13121FDC53B5003BF987 /* LogiTowLib.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,8 +312,10 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_EXTENSION = jnilib;
 				EXECUTABLE_PREFIX = lib;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/JavaVM.framework/Frameworks/JavaNativeFoundation.framework/;
+				PRODUCT_NAME = logitow;
 			};
 			name = Debug;
 		};
@@ -222,8 +324,10 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_EXTENSION = jnilib;
 				EXECUTABLE_PREFIX = lib;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/JavaVM.framework/Frameworks/JavaNativeFoundation.framework/;
+				PRODUCT_NAME = logitow;
 			};
 			name = Release;
 		};
@@ -246,6 +350,7 @@
 				6B4F13171FDC53B5003BF987 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
