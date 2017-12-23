@@ -16,29 +16,29 @@
 @end
 
 JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_setup
-(JNIEnv *env, jobject obj){
-    [[Controller sharedController] setupJNI:env ble_instance:obj];
+(JNIEnv *env, jclass class){
+    [[Controller sharedController] setupJNI:env ble_class:class];
 }
 
 JNIEXPORT jint JNICALL Java_com_trychen_logitow_LogiTowBLEStack_getNativeBluetoothState
-(JNIEnv *env, jobject obj){
+(JNIEnv *env, jclass class){
     return [[Controller sharedController] bluetoothState];
 }
 
 JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogiTowBLEStack_startScanDevice
-(JNIEnv *env, jobject obj)
+(JNIEnv *env, jclass class)
 {
     [[Controller sharedController] startScan];
     
     return true;
 }
 JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_stopScanDevice
-(JNIEnv *env, jobject obj) {
+(JNIEnv *env, jclass class) {
     [[Controller sharedController] stopScan];
 }
 
 JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_disconnect
-(JNIEnv *env, jobject obj, jboolean scanForOtherDevice) {
+(JNIEnv *env, jclass class, jboolean scanForOtherDevice) {
     [[Controller sharedController] disconnect:scanForOtherDevice];
 }
 

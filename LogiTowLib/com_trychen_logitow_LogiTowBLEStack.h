@@ -7,46 +7,46 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/*
-* Class:     com_trychen_logitow_LogiTowBLEStack
-* Method:    setup
-* Signature: ()V
-*/
-JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_setup
-(JNIEnv *, jobject);
-
-/*
- * Class:     com_trychen_logitow_LogiTowBLEStack
- * Method:    getNativeBluetoothState
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_com_trychen_logitow_LogiTowBLEStack_getNativeBluetoothState
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_trychen_logitow_LogiTowBLEStack
- * Method:    startScanDevice
- * Signature: ()Z
- */
-JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogiTowBLEStack_startScanDevice
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_trychen_logitow_LogiTowBLEStack
- * Method:    stopScanDevice
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_stopScanDevice
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_trychen_logitow_LogiTowBLEStack
- * Method:    disconnect
- * Signature: (Z)V
- */
-JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_disconnect
-  (JNIEnv *, jobject, jboolean);
-
+    /*
+     * Class:     com_trychen_logitow_LogiTowBLEStack
+     * Method:    setup
+     * Signature: ()V
+     */
+    JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_setup
+    (JNIEnv *, jclass);
+    
+    /*
+     * Class:     com_trychen_logitow_LogiTowBLEStack
+     * Method:    getNativeBluetoothState
+     * Signature: ()I
+     */
+    JNIEXPORT jint JNICALL Java_com_trychen_logitow_LogiTowBLEStack_getNativeBluetoothState
+    (JNIEnv *, jclass);
+    
+    /*
+     * Class:     com_trychen_logitow_LogiTowBLEStack
+     * Method:    startScanDevice
+     * Signature: ()Z
+     */
+    JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogiTowBLEStack_startScanDevice
+    (JNIEnv *, jclass);
+    
+    /*
+     * Class:     com_trychen_logitow_LogiTowBLEStack
+     * Method:    stopScanDevice
+     * Signature: ()V
+     */
+    JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_stopScanDevice
+    (JNIEnv *, jclass);
+    
+    /*
+     * Class:     com_trychen_logitow_LogiTowBLEStack
+     * Method:    disconnect
+     * Signature: (Z)V
+     */
+    JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_disconnect
+    (JNIEnv *, jclass, jboolean);
+    
 #ifdef __cplusplus
 }
 #endif

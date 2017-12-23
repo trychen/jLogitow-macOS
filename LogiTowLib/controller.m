@@ -13,7 +13,7 @@
 @implementation Controller : NSObject {
     BabyBluetooth *baby;
     JavaVM *jvm;
-    jobject jni_ble_object;
+    jclass jni_ble_class;
 }
 
 + (instancetype)sharedController {
@@ -66,16 +66,16 @@
 /*
  配置JNI
  */
-- (void)setupJNI:(JNIEnv *)env ble_instance:(jobject)obj {
-    if (jni_ble_object != NULL && jvm != NULL) {
-        (*env)->DeleteGlobalRef(env, obj);
+- (void)setupJNI:(JNIEnv *)env ble_class:(jclass)class {
+    if (jni_ble_class != NULL && jvm != NULL) {
+        (*env)->DeleteGlobalRef(env, jni_ble_class);
     }
     
     if (jvm == NULL) (*env)->GetJavaVM(env, &jvm);
 
-    jni_ble_object = (*env)->NewGlobalRef(env, obj);
+    jni_ble_class = (*env)->NewGlobalRef(env, class);
     
-    (*env)->DeleteLocalRef(env, obj);
+    (*env)->DeleteLocalRef(env, class);
 }
 
 /*
@@ -92,17 +92,12 @@
         NSLog(@"Could't get JNIEnv while notifyConnected");
         return;
     }
-    jclass ble_class = (*env)->GetObjectClass(env, jni_ble_object);
-    if (ble_class == NULL) {
-        NSLog(@"Could't find class of ble stack while notifyConnected");
-        return;
-    }
-    jmethodID notify_connected_funid = (*env)->GetMethodID(env, ble_class,"notifyConnected","()V");
+    jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyConnected","()V");
     if (notify_connected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyConnected()V while notifyConnected");
         return;
     }
-    (*env)->CallVoidMethod(env, ble_class, notify_connected_funid);
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid);
 }
 
 /*
@@ -119,17 +114,12 @@
         NSLog(@"Could't get JNIEnv while notifyDisconnected");
         return;
     }
-    jclass ble_class = (*env)->GetObjectClass(env, jni_ble_object);
-    if (ble_class == NULL) {
-        NSLog(@"Could't find class of ble stack while notifyDisconnected");
-        return;
-    }
-    jmethodID notify_connected_funid = (*env)->GetMethodID(env, ble_class,"notifyDisconnected","(Z)V");
+    jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyDisconnected","(Z)V");
     if (notify_connected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyDisconnected(Z)V while notifyDisconnected");
         return;
     }
-    (*env)->CallVoidMethod(env, ble_class, notify_connected_funid, rescan);
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, rescan);
 }
 
 
@@ -147,8 +137,7 @@
         NSLog(@"Could't get JNIEnv while notifyBlockData");
         return;
     }
-    jclass ble_class = (*env)->GetObjectClass(env, jni_ble_object);
-    jmethodID notify_connected_funid = (*env)->GetMethodID(env, ble_class,"notifyBlockData","([B)V");
+    jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyBlockData","([B)V");
     if (notify_connected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyBlockData([B)V while notifyBlockData");
         return;
@@ -159,7 +148,7 @@
         return;
     }
     (*env)->SetByteArrayRegion(env, bytes, 0, 7, data);
-    (*env)->CallVoidMethod(env, ble_class, notify_connected_funid, bytes);
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, bytes);
 }
 
 /*
@@ -244,6 +233,7 @@
     
     [baby setBlockOnDisconnect:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error){
         [weakSelf notifyDisconnected:true];
+        [weakSelf startScan];
     }];
 }
 @end

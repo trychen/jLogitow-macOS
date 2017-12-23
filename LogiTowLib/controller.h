@@ -16,7 +16,7 @@
 
 @property BabyBluetooth *baby;
 @property JavaVM *jvm;
-@property jobject jni_ble_object;
+@property jclass jni_ble_class;
 
 + (instancetype) sharedController;
 
@@ -28,7 +28,7 @@
 
 - (CBCentralManagerState) bluetoothState;
 
-- (void)setupJNI:(JNIEnv)env ble_instance:(jobject) obj;
+- (void)setupJNI:(JNIEnv)env ble_class:(jclass) class;
 
 @end
 
