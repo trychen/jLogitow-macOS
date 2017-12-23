@@ -77,11 +77,10 @@
     
     (*env)->DeleteLocalRef(env, class);
 }
-
 /*
  通知 BLE Stack 已连接成功
  */
-- (void)notifyConnected {
+- (void)notifyConnected: (NSString *) uuid {
     if (jvm == NULL) {
         NSLog(@"Could't find JVM to get JNIEnv while notifyConnected");
         return;
@@ -92,12 +91,19 @@
         NSLog(@"Could't get JNIEnv while notifyConnected");
         return;
     }
-    jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyConnected","()V");
+    jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyConnected","(Ljava/lang/String;)V");
     if (notify_connected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyConnected()V while notifyConnected");
         return;
     }
-    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid);
+    
+    int length = [uuid length];
+    
+    unichar uniString[length];
+    
+    [uuid getCharacters: uniString];
+    
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, (*env)->NewString(env, uniString, length));
 }
 
 /*
@@ -114,12 +120,12 @@
         NSLog(@"Could't get JNIEnv while notifyDisconnected");
         return;
     }
-    jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyDisconnected","(Z)V");
-    if (notify_connected_funid == NULL) {
+    jmethodID notify_disconnected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyDisconnected","(Z)V");
+    if (notify_disconnected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyDisconnected(Z)V while notifyDisconnected");
         return;
     }
-    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, rescan);
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_disconnected_funid, rescan);
 }
 
 
@@ -197,7 +203,7 @@
         // 停止扫描
         [weakBaby cancelScan];
         
-        [weakSelf notifyConnected];
+        [weakSelf notifyConnected: peripheral.identifier.UUIDString];
     }];
     
     //设置发现设备的Services的委托
@@ -236,4 +242,5 @@
         [weakSelf startScan];
     }];
 }
+
 @end
