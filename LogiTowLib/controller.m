@@ -72,7 +72,7 @@
     }
     
     if (jvm == NULL) (*env)->GetJavaVM(env, &jvm);
-
+    
     jni_ble_class = (*env)->NewGlobalRef(env, class);
     
     (*env)->DeleteLocalRef(env, class);
@@ -97,19 +97,13 @@
         return;
     }
     
-    int length = [uuid length];
-    
-    unichar uniString[length];
-    
-    [uuid getCharacters: uniString];
-    
-    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, (*env)->NewString(env, uniString, length));
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, [Controller newJStringFromeNSString:uuid env:env]);
 }
 
 /*
  通知 BLE Stack 已断开连接
  */
-- (void)notifyDisconnected: (jboolean)rescan {
+- (void)notifyDisconnected: (jboolean)rescan device_uuid:(NSString *) uuid {
     if (jvm == NULL) {
         NSLog(@"Could't find JVM to get JNIEnv while notifyDisconnected");
         return;
@@ -120,19 +114,19 @@
         NSLog(@"Could't get JNIEnv while notifyDisconnected");
         return;
     }
-    jmethodID notify_disconnected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyDisconnected","(Z)V");
+    jmethodID notify_disconnected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyDisconnected","(Ljava/lang/String;Z)V");
     if (notify_disconnected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyDisconnected(Z)V while notifyDisconnected");
         return;
     }
-    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_disconnected_funid, rescan);
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_disconnected_funid, [Controller newJStringFromeNSString:uuid env:env] , rescan);
 }
 
 
 /*
  通知 BLE Stack 获取到了方块数据
  */
-- (void)notifyBlockData: (const void *)data {
+- (void)notifyBlockData: (const void *)data device_uuid:(NSString *) uuid{
     if (jvm == NULL) {
         NSLog(@"Could't find JVM to get JNIEnv while notifyBlockData");
         return;
@@ -143,9 +137,9 @@
         NSLog(@"Could't get JNIEnv while notifyBlockData");
         return;
     }
-    jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyBlockData","([B)V");
+    jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyBlockData","(Ljava/lang/String;[B)V");
     if (notify_connected_funid == NULL) {
-        NSLog(@"Could't get methodid for notifyBlockData([B)V while notifyBlockData");
+        NSLog(@"Could't get methodid for notifyBlockData(Ljava/lang/String;[B)V while notifyBlockData");
         return;
     }
     jbyteArray bytes = (*env)->NewByteArray(env, 7);
@@ -154,7 +148,21 @@
         return;
     }
     (*env)->SetByteArrayRegion(env, bytes, 0, 7, data);
-    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, bytes);
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, [Controller newJStringFromeNSString:uuid env:env], bytes);
+}
+
+/*
+ 创建jstring
+ */
++ (jstring) newJStringFromeNSString: (NSString *) string env:(JNIEnv *)env{
+    int length = [string length];
+    
+    unichar uniString[length];
+    
+    [string getCharacters: uniString];
+    
+    return (*env)->NewString(env, uniString, length);
+    
 }
 
 /*
@@ -181,16 +189,11 @@
     }];
     
     // 连接过滤器
-    __block BOOL isFirst = YES;
     [baby setFilterOnConnectToPeripherals:^BOOL(NSString *peripheralName, NSDictionary *advertisementData, NSNumber *RSSI) {
         // 排除没有数据传送服务服务的
         if (![[advertisementData allKeys] containsObject:@"kCBAdvDataServiceUUIDs"]) return NO;
         if (![[advertisementData objectForKey:@"kCBAdvDataServiceUUIDs"] containsObject:[CBUUID UUIDWithString:@"69400001-b5a3-f393-e0a9-e50e24dcca99"]]) return NO;
         // 连接第一个设备
-        if (isFirst) {
-            isFirst = NO;
-            return YES;
-        }
         NSLog(@"Found logitow devices");
         return YES;
     }];
@@ -230,7 +233,7 @@
                       characteristic:c
                                block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
                                    //接收到值会进入这个方法
-                                   [weakSelf notifyBlockData:[characteristics.value bytes]];
+                                   [weakSelf notifyBlockData:[characteristics.value bytes] device_uuid:peripheral.identifier.UUIDString];
                                }];
                 }
             }
@@ -238,7 +241,7 @@
     }];
     
     [baby setBlockOnDisconnect:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error){
-        [weakSelf notifyDisconnected:true];
+        [weakSelf notifyDisconnected:true device_uuid:peripheral.identifier.UUIDString];
         [weakSelf startScan];
     }];
 }
