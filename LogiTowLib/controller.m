@@ -195,6 +195,35 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
     (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_connected_funid, [Controller newJStringFromeNSString:uuid env:env], bytes);
 }
 
+
+/*
+ 通知 BLE Stack 获取到了电量数据
+ */
+- (void)notifyVoltageData: (const void *)data device_uuid:(NSString *) uuid{
+    if (jvm == NULL) {
+        NSLog(@"Could't find JVM to get JNIEnv while notifyVoltageData");
+        return;
+    }
+    JNIEnv *env;
+    (*jvm)->GetEnv(jvm, (void**) &env, JNI_VERSION_1_4);
+    if (env == NULL) {
+        NSLog(@"Could't get JNIEnv while notifyVoltageData");
+        return;
+    }
+    
+    jmethodID notify_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyVoltage","(Ljava/lang/String;[B)V");
+    if (notify_funid == NULL) {
+        NSLog(@"Could't get methodid for notifyVoltage(Ljava/lang/String;F)V while notifyVoltageData");
+        return;
+    }
+    jbyteArray bytes = (*env)->NewByteArray(env, 2);
+    if (bytes == NULL) {
+        NSLog(@"Could't new byte array while notifyVoltageData");
+        return;
+    }
+    (*env)->SetByteArrayRegion(env, bytes, 0, 2, data);
+    (*env)->CallStaticVoidMethod(env, jni_ble_class, notify_funid, [Controller newJStringFromeNSString:uuid env:env], bytes);
+}
 /*
  创建jstring
  */
@@ -207,6 +236,13 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
     
     return (*env)->NewString(env, uniString, length);
     
+}
+
++ (float)calcDistByRSSI:(int)rssi
+{
+    int iRssi = abs(rssi);
+    float power = (iRssi-59)/(10*2.0);
+    return pow(10, power);
 }
 
 /*
@@ -282,15 +318,16 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
         } else if ([service.UUID isEqual:VOLTAGE_SERVICE_UUID]){
             // 模块驱动服务
             for (CBCharacteristic *c in service.characteristics) {
-                if ([c.UUID isEqual:VOLTAGE_CHARACTERISTICS_READ_UUID]) {
+                if ([c.UUID isEqual:VOLTAGE_CHARACTERISTICS_WRITE_UUID]) {
                     // 读
                     NSLog(@"Found characteristice to read voltage with UUID %@", c.UUID.UUIDString);
                     [weakBaby cancelNotify:peripheral characteristic:c];
                     [weakBaby notify:peripheral
                       characteristic:c
-                               block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
-                                   //接收电量
-                                   NSLog(@"2 Got voltage %@", [characteristics.value bytes]);
+                               block:^(CBPeripheral *peripheral, CBCharacteristic *characteristic, NSError *error) {
+                                   Byte bytes[2];
+                                   [characteristic.value getBytes:&bytes length:2];
+                                   if(characteristic.value != NULL) [weakSelf notifyVoltageData:bytes device_uuid:peripheral.identifier.UUIDString];
                                }];
                 }
             }
@@ -300,13 +337,6 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
     [baby setBlockOnDisconnect:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error){
         NSLog(@"Disconnected Device %@", peripheral.identifier.UUIDString);
         [weakSelf notifyDisconnected:true device_uuid:peripheral.identifier.UUIDString];
-    }];
-    
-    [baby setBlockOnDidWriteValueForCharacteristic:^(CBCharacteristic *characteristic, NSError *error) {
-        if ([characteristic.UUID isEqual:VOLTAGE_CHARACTERISTICS_READ_UUID]) {
-            NSLog(@"1 %@", characteristic.value == NULL?@"NULL":@"NOT NULL");
-            if(characteristic.value != NULL) NSLog(@"1 Got voltage %@", [characteristic.value bytes]);
-        }
     }];
 }
 
