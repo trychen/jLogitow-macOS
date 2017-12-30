@@ -42,10 +42,10 @@ extern "C" {
     /*
      * Class:     com_trychen_logitow_LogiTowBLEStack
      * Method:    disconnect
-     * Signature: (Z)V
+     * Signature: (Ljava/lang/String;)V
      */
     JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_disconnect
-    (JNIEnv *, jclass, jboolean);
+    (JNIEnv *, jclass, jstring);
     
     
     /*

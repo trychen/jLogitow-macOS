@@ -38,8 +38,14 @@ JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_stopScanDevice
 }
 
 JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_disconnect
-(JNIEnv *env, jclass class, jboolean scanForOtherDevice) {
-    [[Controller sharedController] disconnect:scanForOtherDevice];
+(JNIEnv *env, jclass class, jstring uuid) {
+    const char *chars = (*env)->GetStringUTFChars(env, uuid, 0);
+    
+    NSString *deviceUUID = [NSString stringWithUTF8String:chars];
+    
+    [[Controller sharedController] disconnect:deviceUUID];
+    
+    (*env)->ReleaseStringUTFChars(env, uuid, chars);
 }
 
 JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogiTowBLEStack_writeToGetVoltage(JNIEnv *env, jclass class, jstring uuid) {

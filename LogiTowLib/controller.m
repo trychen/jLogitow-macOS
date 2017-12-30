@@ -80,10 +80,11 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
 /*
  断开连接，并重新搜索？
  */
-- (void) disconnect: (jboolean) restartScan {
-    [baby cancelAllPeripheralsConnection];
-    if (restartScan) {
-        [self startScan];
+- (void) disconnect: (NSString *) deviceUUID {
+    for (CBPeripheral *peripheral in [baby findConnectedPeripherals]) {
+        if ([peripheral.identifier.UUIDString isEqual:[deviceUUID uppercaseString]]) {
+            [baby cancelPeripheralConnection:peripheral];
+        }
     }
 }
 
