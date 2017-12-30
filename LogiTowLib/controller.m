@@ -312,7 +312,7 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
                       characteristic:c
                                block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
                                    //接收到值会进入这个方法
-                                   [weakSelf notifyBlockData:[characteristics.value bytes] device_uuid:peripheral.identifier.UUIDString];
+                                   [weakSelf notifyBlockData:characteristics.value.bytes device_uuid:peripheral.identifier.UUIDString];
                                }];
                 }
             }
@@ -326,9 +326,7 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
                     [weakBaby notify:peripheral
                       characteristic:c
                                block:^(CBPeripheral *peripheral, CBCharacteristic *characteristic, NSError *error) {
-                                   Byte bytes[2];
-                                   [characteristic.value getBytes:&bytes length:2];
-                                   if(characteristic.value != NULL) [weakSelf notifyVoltageData:bytes device_uuid:peripheral.identifier.UUIDString];
+                                   if(characteristic.value != NULL) [weakSelf notifyVoltageData:characteristic.value.bytes device_uuid:peripheral.identifier.UUIDString];
                                }];
                 }
             }
