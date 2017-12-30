@@ -14,7 +14,15 @@
     BabyBluetooth *baby;
     JavaVM *jvm;
     jclass jni_ble_class;
+    CBCharacteristic *write;
 }
+
+static CBUUID *BLOCK_DATA_SERVICE_UUID,
+*BLOCK_DATA_CHARACTERISTICS_READ_UUID,
+*BLOCK_DATA_CHARACTERISTICS_WRITE_UUID,
+*VOLTAGE_SERVICE_UUID,
+*VOLTAGE_CHARACTERISTICS_WRITE_UUID,
+*VOLTAGE_CHARACTERISTICS_READ_UUID;
 
 + (instancetype)sharedController {
     static Controller *share = nil;
@@ -33,6 +41,15 @@
         baby = [BabyBluetooth shareBabyBluetooth];
         //设置蓝牙委托
         [self babyDelegate];
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            BLOCK_DATA_SERVICE_UUID = [CBUUID UUIDWithString:@"69400001-B5A3-F393-E0A9-E50E24DCCA99"];
+            BLOCK_DATA_CHARACTERISTICS_READ_UUID = [CBUUID UUIDWithString:@"69400002-B5A3-F393-E0A9-E50E24DCCA99"];
+            BLOCK_DATA_CHARACTERISTICS_WRITE_UUID = [CBUUID UUIDWithString:@"69400003-B5A3-F393-E0A9-E50E24DCCA99"];
+            VOLTAGE_SERVICE_UUID = [CBUUID UUIDWithString:@"7f510004-b5a3-f393-e0a9-e50e24dcca9e"];
+            VOLTAGE_CHARACTERISTICS_WRITE_UUID = [CBUUID UUIDWithString:@"7f510005-b5a3-f393-e0a9-e50e24dcca9e"];
+            VOLTAGE_CHARACTERISTICS_READ_UUID = [CBUUID UUIDWithString:@"7f510006-b5a3-f393-e0a9-e50e24dcca9e"];
+        });
     }
     return self;
 }
@@ -54,6 +71,13 @@
 }
 
 /*
+ 停止搜索
+ */
+- (void)setWrite:(CBCharacteristic *)c {
+    write = c;
+}
+
+/*
  断开连接，并重新搜索？
  */
 - (void) disconnect: (jboolean) restartScan {
@@ -61,6 +85,25 @@
     if (restartScan) {
         [self startScan];
     }
+}
+
+- (BOOL) writeToGetVoltage: (NSString *) deviceUUID {
+    static Byte bytes[] = {0xAD, 0x02};
+    NSData *data = [[NSData alloc] initWithBytes:bytes length:sizeof(bytes)];
+    for (CBPeripheral *peripheral in [baby findConnectedPeripherals]) {
+        if ([peripheral.identifier.UUIDString isEqual:[deviceUUID uppercaseString]]) {
+            for (CBService *service in peripheral.services) {
+                if (![service.UUID isEqual:VOLTAGE_SERVICE_UUID]) continue;
+                for (CBCharacteristic *characteristic in service.characteristics) {
+                    if (![characteristic.UUID isEqual:VOLTAGE_CHARACTERISTICS_WRITE_UUID]) continue;
+                    [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+                    return YES;
+                }
+            }
+        }
+    }
+    NSLog(@"Could't find device %@ to get voltage", [deviceUUID uppercaseString]);
+    return NO;
 }
 
 /*
@@ -77,6 +120,7 @@
     
     (*env)->DeleteLocalRef(env, class);
 }
+
 /*
  通知 BLE Stack 已连接成功
  */
@@ -203,9 +247,6 @@
         // 设置连接成功的block
         NSLog(@"Succeed in connecting to %@ with uuid %s",peripheral.name, [peripheral.identifier UUIDString].UTF8String);
         
-        // 停止扫描
-        [weakBaby cancelScan];
-        
         [weakSelf notifyConnected: peripheral.identifier.UUIDString];
     }];
     
@@ -219,13 +260,14 @@
     // 设置发现设service的Characteristics的委托
     [baby setBlockOnDiscoverCharacteristics:^(CBPeripheral *peripheral, CBService *service, NSError *error) {
         NSLog(@"Finding characteristices in Service %@", service.UUID.UUIDString);
-        if ([service.UUID isEqual:[CBUUID UUIDWithString:@"69400001-B5A3-F393-E0A9-E50E24DCCA99"]]) {
+        
+        if ([service.UUID isEqual:BLOCK_DATA_SERVICE_UUID]) {
             // 数据传送服务
             for (CBCharacteristic *c in service.characteristics) {
-                if ([c.UUID isEqual:[CBUUID UUIDWithString:@"69400002-B5A3-F393-E0A9-E50E24DCCA99"]]) {
+                if ([c.UUID isEqual:BLOCK_DATA_CHARACTERISTICS_WRITE_UUID]) {
                     // 写
                 }
-                if ([c.UUID isEqual:[CBUUID UUIDWithString:@"69400003-B5A3-F393-E0A9-E50E24DCCA99"]]) {
+                if ([c.UUID isEqual:BLOCK_DATA_CHARACTERISTICS_WRITE_UUID]) {
                     // 读
                     NSLog(@"Found characteristice to read block data with UUID %@", c.UUID.UUIDString);
                     [weakBaby cancelNotify:peripheral characteristic:c];
@@ -237,12 +279,34 @@
                                }];
                 }
             }
+        } else if ([service.UUID isEqual:VOLTAGE_SERVICE_UUID]){
+            // 模块驱动服务
+            for (CBCharacteristic *c in service.characteristics) {
+                if ([c.UUID isEqual:VOLTAGE_CHARACTERISTICS_READ_UUID]) {
+                    // 读
+                    NSLog(@"Found characteristice to read voltage with UUID %@", c.UUID.UUIDString);
+                    [weakBaby cancelNotify:peripheral characteristic:c];
+                    [weakBaby notify:peripheral
+                      characteristic:c
+                               block:^(CBPeripheral *peripheral, CBCharacteristic *characteristics, NSError *error) {
+                                   //接收电量
+                                   NSLog(@"2 Got voltage %@", [characteristics.value bytes]);
+                               }];
+                }
+            }
         }
     }];
     
     [baby setBlockOnDisconnect:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error){
+        NSLog(@"Disconnected Device %@", peripheral.identifier.UUIDString);
         [weakSelf notifyDisconnected:true device_uuid:peripheral.identifier.UUIDString];
-        [weakSelf startScan];
+    }];
+    
+    [baby setBlockOnDidWriteValueForCharacteristic:^(CBCharacteristic *characteristic, NSError *error) {
+        if ([characteristic.UUID isEqual:VOLTAGE_CHARACTERISTICS_READ_UUID]) {
+            NSLog(@"1 %@", characteristic.value == NULL?@"NULL":@"NOT NULL");
+            if(characteristic.value != NULL) NSLog(@"1 Got voltage %@", [characteristic.value bytes]);
+        }
     }];
 }
 

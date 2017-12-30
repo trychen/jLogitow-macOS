@@ -28,7 +28,9 @@
 
 - (CBCentralManagerState) bluetoothState;
 
-- (void)setupJNI:(JNIEnv)env ble_class:(jclass) class;
+- (void) setupJNI:(JNIEnv)env ble_class:(jclass) class;
+
+- (BOOL) writeToGetVoltage: (NSString *) deviceUUID;
 
 @end
 

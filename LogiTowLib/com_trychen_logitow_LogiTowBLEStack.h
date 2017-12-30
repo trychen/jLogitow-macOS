@@ -47,6 +47,16 @@ extern "C" {
     JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_disconnect
     (JNIEnv *, jclass, jboolean);
     
+    
+    /*
+     * Class:     com_trychen_logitow_LogiTowBLEStack
+     * Method:    writeToGetVoltage
+     * Signature: (Ljava/lang/String;)V
+     */
+    JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogiTowBLEStack_writeToGetVoltage
+    (JNIEnv *, jclass, jstring);
+
+    
 #ifdef __cplusplus
 }
 #endif
