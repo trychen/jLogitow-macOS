@@ -14,7 +14,7 @@
     BabyBluetooth *baby;
     JavaVM *jvm;
     jclass jni_ble_class;
-    CBCharacteristic *write;
+    JNIEnv *env;
 }
 
 static CBUUID *BLOCK_DATA_SERVICE_UUID,
@@ -71,13 +71,6 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
 }
 
 /*
- 停止搜索
- */
-- (void)setWrite:(CBCharacteristic *)c {
-    write = c;
-}
-
-/*
  断开连接，并重新搜索？
  */
 - (void) disconnect: (NSString *) deviceUUID {
@@ -86,25 +79,6 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
             [baby cancelPeripheralConnection:peripheral];
         }
     }
-}
-
-- (BOOL) writeToGetVoltage: (NSString *) deviceUUID {
-    static Byte bytes[] = {0xAD, 0x02};
-    NSData *data = [[NSData alloc] initWithBytes:bytes length:sizeof(bytes)];
-    for (CBPeripheral *peripheral in [baby findConnectedPeripherals]) {
-        if ([peripheral.identifier.UUIDString isEqual:[deviceUUID uppercaseString]]) {
-            for (CBService *service in peripheral.services) {
-                if (![service.UUID isEqual:VOLTAGE_SERVICE_UUID]) continue;
-                for (CBCharacteristic *characteristic in service.characteristics) {
-                    if (![characteristic.UUID isEqual:VOLTAGE_CHARACTERISTICS_WRITE_UUID]) continue;
-                    [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
-                    return YES;
-                }
-            }
-        }
-    }
-    NSLog(@"Could't find device %@ to get voltage", [deviceUUID uppercaseString]);
-    return NO;
 }
 
 /*
@@ -122,20 +96,72 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
     (*env)->DeleteLocalRef(env, class);
 }
 
+- (JNIEnv *)initJNIEnv {
+    if (env == NULL) {
+        if (jvm == NULL) {
+            NSLog(@"Could't find JVM to get JNIEnv for notifyConnected");
+            return NULL;
+        }
+        
+        //Checking if the thread is attached.
+        int getEnvStat = (*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_6);
+        
+        if (getEnvStat == JNI_EDETACHED) {
+            if ((*jvm)->AttachCurrentThread(jvm, (void **) &env, NULL) != 0) {
+                NSLog(@"GetEnv: failed to attach!");
+            }
+        } else if (getEnvStat == JNI_OK) {
+            return env;
+        } else if (getEnvStat == JNI_EVERSION) {
+            return NULL;
+        }
+    }
+    return env;
+}
+
+- (BOOL)writeToGetVoltage: (NSString *) deviceUUID {
+    CBPeripheral *peripheral;
+    for (CBPeripheral *p in [baby findConnectedPeripherals]) {
+        NSLog(@"Connected Device: %@", p.identifier.UUIDString);
+        if (([[p.identifier.UUIDString uppercaseString] isEqualToString:[deviceUUID uppercaseString]])) {
+            peripheral = p;
+        }
+    }
+    if (peripheral == NULL) {
+        NSLog(@"Could't find device %@ to get voltage", [deviceUUID uppercaseString]);
+        return NO;
+    }
+    for (CBService *service in peripheral.services) {
+        if (![service.UUID isEqual:VOLTAGE_SERVICE_UUID]) continue;
+        for (CBCharacteristic *characteristic in service.characteristics) {
+            if (![characteristic.UUID isEqual:VOLTAGE_CHARACTERISTICS_WRITE_UUID]) continue;
+            static Byte bytes[] = {0xAD, 0x02};
+            NSData *data = [[NSData alloc] initWithBytes:bytes length:sizeof(bytes)];
+            [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+            return YES;
+        }
+    }
+    NSLog(@"Could't find service %@ to get voltage", [deviceUUID uppercaseString]);
+    return NO;
+}
+
+- (BOOL)writeToReadRSSI: (NSString *) deviceUUID {
+    CBPeripheral *peripheral = [baby findConnectedPeripheral:deviceUUID];
+    if (peripheral == NULL) {
+        NSLog(@"Could't find device %@ to read rssi", [deviceUUID uppercaseString]);
+        return NO;
+    }
+    
+    [peripheral readRSSI];
+    return YES;
+}
+
 /*
  通知 BLE Stack 已连接成功
  */
 - (void)notifyConnected: (NSString *) uuid {
-    if (jvm == NULL) {
-        NSLog(@"Could't find JVM to get JNIEnv while notifyConnected");
-        return;
-    }
-    JNIEnv *env;
-    (*jvm)->GetEnv(jvm, (void**) &env, JNI_VERSION_1_4);
-    if (env == NULL) {
-        NSLog(@"Could't get JNIEnv while notifyConnected");
-        return;
-    }
+    if ([self initJNIEnv] == NULL) NSLog(@"Could't get JNIEnv while notifyConnected");
+    
     jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyConnected","(Ljava/lang/String;)V");
     if (notify_connected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyConnected()V while notifyConnected");
@@ -149,16 +175,8 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
  通知 BLE Stack 已断开连接
  */
 - (void)notifyDisconnected: (jboolean)rescan device_uuid:(NSString *) uuid {
-    if (jvm == NULL) {
-        NSLog(@"Could't find JVM to get JNIEnv while notifyDisconnected");
-        return;
-    }
-    JNIEnv *env;
-    (*jvm)->GetEnv(jvm, (void**) &env, JNI_VERSION_1_4);
-    if (env == NULL) {
-        NSLog(@"Could't get JNIEnv while notifyDisconnected");
-        return;
-    }
+    if ([self initJNIEnv] == NULL) NSLog(@"Could't get JNIEnv while notifyDisconnected");
+    
     jmethodID notify_disconnected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyDisconnected","(Ljava/lang/String;Z)V");
     if (notify_disconnected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyDisconnected(Z)V while notifyDisconnected");
@@ -172,16 +190,8 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
  通知 BLE Stack 获取到了方块数据
  */
 - (void)notifyBlockData: (const void *)data device_uuid:(NSString *) uuid{
-    if (jvm == NULL) {
-        NSLog(@"Could't find JVM to get JNIEnv while notifyBlockData");
-        return;
-    }
-    JNIEnv *env;
-    (*jvm)->GetEnv(jvm, (void**) &env, JNI_VERSION_1_4);
-    if (env == NULL) {
-        NSLog(@"Could't get JNIEnv while notifyBlockData");
-        return;
-    }
+    if ([self initJNIEnv] == NULL) NSLog(@"Could't get JNIEnv while notifyBlockData");
+    
     jmethodID notify_connected_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyBlockData","(Ljava/lang/String;[B)V");
     if (notify_connected_funid == NULL) {
         NSLog(@"Could't get methodid for notifyBlockData(Ljava/lang/String;[B)V while notifyBlockData");
@@ -200,17 +210,8 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
 /*
  通知 BLE Stack 获取到了电量数据
  */
-- (void)notifyVoltageData: (const void *)data device_uuid:(NSString *) uuid{
-    if (jvm == NULL) {
-        NSLog(@"Could't find JVM to get JNIEnv while notifyVoltageData");
-        return;
-    }
-    JNIEnv *env;
-    (*jvm)->GetEnv(jvm, (void**) &env, JNI_VERSION_1_4);
-    if (env == NULL) {
-        NSLog(@"Could't get JNIEnv while notifyVoltageData");
-        return;
-    }
+- (void)notifyVoltageData: (const Byte *)data device_uuid:(NSString *) uuid {
+    if ([self initJNIEnv] == NULL) NSLog(@"Could't get JNIEnv while notifyVoltageData");
     
     jmethodID notify_funid = (*env)->GetStaticMethodID(env, jni_ble_class,"notifyVoltage","(Ljava/lang/String;[B)V");
     if (notify_funid == NULL) {
@@ -228,7 +229,7 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
 /*
  创建jstring
  */
-+ (jstring) newJStringFromeNSString: (NSString *) string env:(JNIEnv *)env{
++ (jstring) newJStringFromeNSString: (NSString *) string env:(JNIEnv *)env {
     int length = [string length];
     
     unichar uniString[length];
@@ -239,8 +240,7 @@ static CBUUID *BLOCK_DATA_SERVICE_UUID,
     
 }
 
-+ (float)calcDistByRSSI:(int)rssi
-{
++ (float)calcDistByRSSI:(int)rssi {
     int iRssi = abs(rssi);
     float power = (iRssi-59)/(10*2.0);
     return pow(10, power);

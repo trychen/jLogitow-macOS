@@ -6,7 +6,7 @@
 //
 //
 
-#import "com_trychen_logitow_LogiTowBLEStack.h"
+#import "com_trychen_logitow_LogitowBLEStack.h"
 #import "LogiTowLib.h"
 #import "BabyBluetooth.h"
 #import <CoreBluetooth/CoreBluetooth.h>
@@ -15,29 +15,29 @@
 
 @end
 
-JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_setup
+JNIEXPORT void JNICALL Java_com_trychen_logitow_LogitowBLEStack_setup
 (JNIEnv *env, jclass class){
     [[Controller sharedController] setupJNI:env ble_class:class];
 }
 
-JNIEXPORT jint JNICALL Java_com_trychen_logitow_LogiTowBLEStack_getNativeBluetoothState
+JNIEXPORT jint JNICALL Java_com_trychen_logitow_LogitowBLEStack_getNativeBluetoothState
 (JNIEnv *env, jclass class){
     return [[Controller sharedController] bluetoothState];
 }
 
-JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogiTowBLEStack_startScanDevice
+JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogitowBLEStack_startScanDevice
 (JNIEnv *env, jclass class)
 {
     [[Controller sharedController] startScan];
     
     return true;
 }
-JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_stopScanDevice
+JNIEXPORT void JNICALL Java_com_trychen_logitow_LogitowBLEStack_stopScanDevice
 (JNIEnv *env, jclass class) {
     [[Controller sharedController] stopScan];
 }
 
-JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_disconnect
+JNIEXPORT void JNICALL Java_com_trychen_logitow_LogitowBLEStack_disconnect
 (JNIEnv *env, jclass class, jstring uuid) {
     const char *chars = (*env)->GetStringUTFChars(env, uuid, 0);
     
@@ -48,7 +48,7 @@ JNIEXPORT void JNICALL Java_com_trychen_logitow_LogiTowBLEStack_disconnect
     (*env)->ReleaseStringUTFChars(env, uuid, chars);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogiTowBLEStack_writeToGetVoltage(JNIEnv *env, jclass class, jstring uuid) {
+JNIEXPORT jboolean JNICALL Java_com_trychen_logitow_LogitowBLEStack_writeToGetVoltage(JNIEnv *env, jclass class, jstring uuid) {
     const char *chars = (*env)->GetStringUTFChars(env, uuid, 0);
     
     NSString *deviceUUID = [NSString stringWithUTF8String:chars];

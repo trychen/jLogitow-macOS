@@ -32,6 +32,8 @@
 
 - (BOOL) writeToGetVoltage: (NSString *) deviceUUID;
 
+- (BOOL) writeToReadRSSI: (NSString *) deviceUUID;
+
 @end
 
 #endif /* controller_h */
